@@ -20,6 +20,8 @@ http://chromedriver.chromium.org/downloads
 スクレイピング対象ページに表示される依頼要素一覧をcsvで保存する。
 `カテゴリ_難易度_期間_継続性_日付.csv`
 
+取得した情報は./scrap_data 配下に格納する
+
 ## 構造化データ解析
 recommended-job-offers : 全体の囲み
 この配下にul, liで各依頼が格納されている
