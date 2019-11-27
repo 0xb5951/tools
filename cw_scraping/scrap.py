@@ -1,5 +1,6 @@
 import chromedriver_binary
 from selenium import webdriver
+from bs4 import BeautifulSoup
 
 import settings
 
@@ -38,9 +39,15 @@ class ScrapeWithLogin():
         driver = self.driver
         # 対象ページに移動
         driver.get(url)
+        # bs4に託す
+        soup = BeautifulSoup(driver.page_source, "html.parser")
         # 依頼の全体要素をリストに格納
-        recommend_works = driver.find_elements_by_css_selector('li[data-job_offer_id]')
-        print(recommend_works)
+        recommend_works = soup.select('li[data-job_offer_id]')
+
+        for work in recommend_works:
+            work_id = work['data-job_offer_id']
+            print(work_id)
+            
         return
 
 if __name__ == '__main__':
