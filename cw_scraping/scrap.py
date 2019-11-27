@@ -1,3 +1,4 @@
+import re
 import chromedriver_binary
 from selenium import webdriver
 from bs4 import BeautifulSoup
@@ -62,10 +63,10 @@ class ScrapeWithLogin():
             work_title = work_a_links[0].text.strip()
             work_category = work_a_links[1].text.strip()
 
-            work_price = work_bolds[0].text.strip()
+            work_price = re.sub(r'[ 　\t\n,]*','', work_bolds[0].text)
             work_post_num = work_bolds[1].text.strip()
             work_deadline = work_bolds[2].text.strip()
-            
+
             # 情報を書き込み
             work_infos += '{0},{1},{2},{3},{4},{5}\n'.format(work_id, work_title, work_category, work_price, work_post_num, work_deadline)
 
