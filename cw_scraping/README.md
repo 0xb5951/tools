@@ -10,3 +10,8 @@ https://crowdworks.jp/public/jobs/recommendations/recommend_for_you
 
 このページを見るには、サイトにログインする必要がある.
 処理の最初でログインして、対象ページをファイルに吐き出したら、ログアウトするような処理を実施する。
+
+ログイン対象ページ
+https://crowdworks.jp/login
+
+ここにメールとパスワードをpostする
