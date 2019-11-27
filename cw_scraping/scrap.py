@@ -5,6 +5,7 @@ import settings
 
 # 設定値
 LOGIN_URL = 'https://crowdworks.jp/login'
+SCRAP_URL = 'https://crowdworks.jp/public/jobs/recommendations/recommend_for_you'
 
 class ScrapeWithLogin():
     def __init__(self, url):
@@ -33,6 +34,16 @@ class ScrapeWithLogin():
         print('Login Succcess')
         return
 
+    def scrap(self, url):
+        driver = self.driver
+        # 対象ページに移動
+        driver.get(url)
+        # 依頼の全体要素をリストに格納
+        recommend_works = driver.find_elements_by_css_selector('li[data-job_offer_id]')
+        print(recommend_works)
+        return
+
 if __name__ == '__main__':
     scrap = ScrapeWithLogin(LOGIN_URL)
     scrap.login()
+    scrap.scrap(SCRAP_URL)
