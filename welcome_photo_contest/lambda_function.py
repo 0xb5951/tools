@@ -19,33 +19,15 @@ def get_slack_file(token,file_id):
     return json.loads(response.text)
 
 #Slackに投稿
-def Slack_post(webhook_url,label,text,key):
-    bot_token = os.getenv('SLACK_BOT_USER_ACCESS_TOKEN')
-    message ='S3に'+key+'をアップロードしました。\n'
-    message +='解析結果\n'
-    message +='\n物体検出\n'
-
-    #物体検出
-    for lb_n in label:
-        message +=lb_n['Name']+':'+str(round(float(lb_n['Confidence']),1))+'%\n'
-
-    message +='\nテキスト検出\n'
-
-    #テキスト検出
-    for tex_n in text:
-        message +=tex_n['DetectedText']+':'+str(round(float(tex_n['Confidence']),1))+'%\n'
+def post_slack(user, score):
+    webhook_url = 'https://hooks.slack.com/services/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'
+    bot_token = os.environ["SLACK_BOT_USER_ACCESS_TOKEN"]
+    message ='<@{0}>\nこの写真の点数は{1}点です！！'.format(user, score)
 
     item= { 'text':  message }
 
     headers = {'Content-type': 'application/json'}
-
-    try:
-      requests.post(webhook_url,json=item,headers=headers)
-
-    except Exception as e:
-      logging.info("type:%s", type(e))
-      logging.error(e)
-
+    requests.post(webhook_url,json=item,headers=headers)
     return
 
 def lambda_handler(event, context):
@@ -53,7 +35,9 @@ def lambda_handler(event, context):
     # TODO implement
     print(event)
 
-    print(event['event']['files'][0]['id'])
+    if event['event']['text'] not in '<@UTHADKVA6>':
+        return 0
+
     file_id = event['event']['files'][0]['id']
     # 画像情報
     file_res = get_slack_file(bot_token, file_id)
@@ -94,11 +78,6 @@ def lambda_handler(event, context):
     photo_score -= face_pos*10
     photo_score += sum_smile
 
-    print(photo_score)
+    post_slack(event['event']['user'], photo_score)
 
-    if event['event']['text'] in '<@UTHADKVA6>':
-        print('check run')
-
-    return {
-        'statusCode': 200
-    }
+    return 0
