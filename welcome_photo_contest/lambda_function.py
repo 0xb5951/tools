@@ -2,6 +2,18 @@ import json
 import boto3
 import os
 import requests
+import threading
+
+
+def lambda_handler(event, content):
+    thread_1 = threading.Thread(target=return_200)
+    thread_2 = threading.Thread(target=main_func(event, content))
+    return 0
+
+# slackにとりあえず200を返す
+def return_200():
+    print("prodess kill")
+    return 0
 
 #画像ダウンロード
 def get_image(image_url,bot_token):
@@ -30,10 +42,8 @@ def post_slack(user, score):
     requests.post(webhook_url,json=item,headers=headers)
     return
 
-def lambda_handler(event, context):
+def main_func(event, context):
     bot_token = os.getenv('SLACK_BOT_USER_ACCESS_TOKEN')
-    # TODO implement
-    print(event)
 
     if event['event']['text'] not in '<@UTHADKVA6>':
         return 0
