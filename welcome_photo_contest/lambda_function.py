@@ -58,7 +58,12 @@ def lambda_handler(event, context):
     # 画像情報
     file_res = get_slack_file(bot_token, file_id)
     # 画像取得
-    image = get_image(event['event']['files'][0]['url_private'], bot_token)
+    byte_image = get_image(event['event']['files'][0]['url_private'], bot_token)
+    # Rekognitionのラベル検出を呼び出す。
+    rekognition = boto3.client('rekognition', 'ap-northeast-1')
+    response = rekognition.detect_labels(Image={'Bytes': byte_image})
+    
+    print(json.dumps(response, indent=2))
     print(image)
     if event['event']['text'] in '<@UTHADKVA6>':
         print('check run')
