@@ -4,8 +4,7 @@ import os
 import requests
 
 #画像ダウンロード
-def get_image(image_url,token):
-    bot_token = os.getenv('SLACK_BOT_USER_ACCESS_TOKEN')
+def get_image(image_url,bot_token):
     headers = {'Authorization': 'Bearer {}'.format(bot_token)}
 
     image = requests.get(image_url,headers=headers)
@@ -56,9 +55,11 @@ def lambda_handler(event, context):
 
     print(event['event']['files'][0]['id'])
     file_id = event['event']['files'][0]['id']
-    # 画像取得？
+    # 画像情報
     file_res = get_slack_file(bot_token, file_id)
-    print(file_res)
+    # 画像取得
+    image = get_image(event['event']['files'][0]['url_private'], bot_token)
+    print(image)
     if event['event']['text'] in '<@UTHADKVA6>':
         print('check run')
 
