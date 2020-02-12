@@ -61,10 +61,41 @@ def lambda_handler(event, context):
     byte_image = get_image(event['event']['files'][0]['url_private'], bot_token)
     # Rekognitionのラベル検出を呼び出す。
     rekognition = boto3.client('rekognition', 'ap-northeast-1')
-    response = rekognition.detect_labels(Image={'Bytes': byte_image})
+    response = rekognition.detect_faces(Image={'Bytes': byte_image}, Attributes=['ALL'])
     
-    print(json.dumps(response, indent=2))
-    print(image)
+    face_details = response['FaceDetails']
+
+    sum_smile = 0
+    sum_happy = 0
+    face_pos = 0
+    photo_score = 1000
+    human_count = 0
+ 
+    for item in face_details:
+        smile = item['Smile']
+        emotions = item['Emotions']
+        lamdmarks = item['Landmarks']
+        human_count += 1
+
+        if smile['Value'] == 'true':
+            sum_smile += smile['Confidence'] * 20
+
+        for emotion in emotions:
+            if emotion['Type'] == "HAPPY":
+                sum_happy += emotion['Confidence'] * 10
+        
+        for lamdmark in lamdmarks:
+            if lamdmark['Type'] == "nose":
+                nose_x = abs(lamdmark['X'] - 0.5)*100
+                nose_y = abs(lamdmark['Y'] - 0.5)*100
+                face_pos += nose_x + nose_y
+    
+    face_pos /= human_count
+    photo_score -= face_pos*10
+    photo_score += sum_smile
+
+    print(photo_score)
+
     if event['event']['text'] in '<@UTHADKVA6>':
         print('check run')
 
